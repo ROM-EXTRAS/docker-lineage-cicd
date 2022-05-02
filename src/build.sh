@@ -99,7 +99,8 @@ for branch in ${BRANCH_NAME//,/ }; do
   devices=${!device_list_cur_branch}
 
   if [ -n "$branch" ] && [ -n "$devices" ]; then
-    vendor=lineage
+    vendor="$VENDOR"
+    android_version="$ANDROID"
     apps_permissioncontroller_patch=""
     modules_permission_patch=""
     case "$branch" in
@@ -152,7 +153,7 @@ for branch in ${BRANCH_NAME//,/ }; do
 
     # Remove previous changes of vendor/cm, vendor/lineage and frameworks/base (if they exist)
     # TODO: maybe reset everything using https://source.android.com/setup/develop/repo#forall
-    for path in "vendor/cm" "vendor/lineage" "frameworks/base" "packages/apps/PermissionController" "packages/modules/Permission"; do
+    for path in "vendor/cm" "vendor/$vendor" "frameworks/base" "packages/apps/PermissionController" "packages/modules/Permission"; do
       if [ -d "$path" ]; then
         cd "$path"
         git reset -q --hard
@@ -161,11 +162,15 @@ for branch in ${BRANCH_NAME//,/ }; do
       fi
     done
 
+    if [ -n "$DEPTH" ]; then
+      export CLONE_DEPTH="--depth $DEPTH"
+    fi
+
     echo ">> [$(date)] (Re)initializing branch repository" | tee -a "$repo_log"
     if [ "$LOCAL_MIRROR" = true ]; then
-      ( yes||: ) | repo init -u https://github.com/LineageOS/android.git --reference "$MIRROR_DIR" -b "$branch" &>> "$repo_log"
+      ( yes||: ) | repo init -u "$REPO_INIT".git --reference "$MIRROR_DIR" -b "$branch" &>> "$repo_log"
     else
-      ( yes||: ) | repo init -u https://github.com/LineageOS/android.git -b "$branch" &>> "$repo_log"
+      ( yes||: ) | repo init -u "$REPO_INIT".git -b "$branch" "$CLONE_DEPTH" &>> "$repo_log"
     fi
 
     # Copy local manifests to the appropriate folder in order take them into consideration

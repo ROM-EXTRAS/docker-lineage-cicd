@@ -20,6 +20,18 @@ ENV USER root
 # Configurable environment variables
 ####################################
 
+# Set up the custom rom repo
+ENV REPO_INIT 'https://github.com/LineageOS/android'
+
+# Set a vendor name (Ex. "aosp" for ROMs that store vendor configs in vendor/aosp)
+ENV VENDOR 'lineage'
+
+# Set Android Version
+ENV ANDROID '12'
+
+# Clone depth
+ENV DEPTH ''
+
 # By default we want to use CCACHE, you can disable this
 # WARNING: disabling this may slow down a lot your builds!
 ENV USE_CCACHE 1
@@ -34,7 +46,7 @@ ENV CCACHE_EXEC /usr/bin/ccache
 
 # Environment for the LineageOS branches name
 # See https://github.com/LineageOS/android/branches for possible options
-ENV BRANCH_NAME 'lineage-16.0'
+ENV BRANCH_NAME 'lineage-19.1'
 
 # Environment for the device list (separate by comma if more than one)
 # eg. DEVICE_LIST=hammerhead,bullhead,angler
